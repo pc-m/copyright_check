@@ -7,12 +7,13 @@
 #
 # If there is a copyright line, it checks if the current year is present.
 
+current_year=$(date +"%Y")
 files_to_check=$(git diff --cached --name-only --diff-filter=MA)
 fail=0
 
 for filename in $files_to_check
 do
-    grep -i 'copyright' <(git show :$filename) | grep -v 2015 >> /dev/null
+    grep -i 'copyright' -m1 <(git show :$filename) | grep -v $current_year >> /dev/null
     if [[ $? -ne 1 ]]; then
       echo "$filename as an outdated copyright date"
       fail=1
