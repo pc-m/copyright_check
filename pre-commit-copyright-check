@@ -15,7 +15,7 @@ for filename in $files_to_check
 do
     grep -i 'copyright' -m1 <(git show :$filename) | grep -v $current_year >> /dev/null
     if [[ $? -ne 1 ]]; then
-      echo "$filename as an outdated copyright date"
+      echo "$filename has an outdated copyright date"
       fail=1
     fi
 done
