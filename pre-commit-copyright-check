@@ -15,8 +15,11 @@ for filename in $files_to_check
 do
     grep -Poq "(:c|C)opyright.*${current_year}" <(git show :${filename})
     if [[ $? -ne 0 ]]; then
-      echo "$filename has an outdated copyright date"
-      fail=1
+      grep -iq 'copyright' -m1 <(git show :${filename})
+      if [[ $? -ne 1 ]]; then
+        echo "$filename has an outdated copyright date"
+        fail=1
+      fi
     fi
 done
 
