@@ -6,6 +6,9 @@
 # in this commit.
 #
 # If there is a copyright line, it checks if the current year is present.
+#
+# If you need to bypass this check, set the NO_COPYRIGHT_CHECK
+# environmental variable to any value.
 
 current_year=$(date +"%Y")
 files_to_check=$(git diff --cached --name-only --diff-filter=MA)
@@ -13,15 +16,20 @@ fail=0
 
 for filename in $files_to_check
 do
-    grep -Poq "(:c|C)opyright.*${current_year}" <(git show :${filename})
+    grep -Poq "(:c|C)opyright.*${current_year}" <(git show ":${filename}")
     if [[ $? -ne 0 ]]; then
-      grep -iq 'copyright' -m1 <(git show :${filename})
+      grep -iq 'copyright' -m1 <(git show ":${filename}")
       if [[ $? -ne 1 ]]; then
         echo "$filename has an outdated copyright date"
         fail=1
       fi
     fi
 done
+
+if [ "$NO_COPYRIGHT_CHECK" != "" ] ; then
+    echo "Bypassing copyright check due to NO_COPYRIGHT_CHECK env variable";
+    exit 0
+fi
 
 if [[ $fail -eq 0 ]]; then
     exit 0
