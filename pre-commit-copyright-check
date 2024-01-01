@@ -6,6 +6,9 @@
 # in this commit.
 #
 # If there is a copyright line, it checks if the current year is present.
+#
+# If you need to bypass this check, set the NO_COPYRIGHT_CHECK
+# environmental variable to any value.
 
 current_year=$(date +"%Y")
 files_to_check=$(git diff --cached --name-only --diff-filter=MA)
@@ -22,6 +25,11 @@ do
       fi
     fi
 done
+
+if [ "$NO_COPYRIGHT_CHECK" != "" ] ; then
+    echo "Bypassing copyright check due to NO_COPYRIGHT_CHECK env variable";
+    exit 0
+fi
 
 if [[ $fail -eq 0 ]]; then
     exit 0
